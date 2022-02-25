@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: syarpa-k8s-slim-burster
-        image: registry.digitalocean.com/syarpa/syarpa-k8s-slim-burster:v1.0.0
+        image: registry.digitalocean.com/syarpa/syarpa-k8s-slim-burster:latest
         imagePullPolicy: Always
         envFrom:
           - secretRef:

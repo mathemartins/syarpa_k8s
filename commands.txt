@@ -1,0 +1,114 @@
+# Run docker to start
+docker-compose up
+
+# Run docker to shutdown
+docker-compose down
+
+# Run docker to build and start
+docker-compose up --build
+
+# Enter the backend of the docker container backend service
+docker-compose exec backend sh  NB: backend is the service name, it could be anything
+
+# for container service running inside of docker and its assigned IP-address to all services internally
+
+# Check for existing running container and kill
+docker container ls
+docker container ls -a # Shows all previous and currently running container
+docker rm -f <container-name>
+docker rm -f <container-id>
+
+# Stop a running container in the docker
+docker stop <container-id>
+
+# Restart the docker service engine
+sudo service docker stop
+sudo rm -f /var/lib/docker/network/files/local-kv.db
+
+# Deploying on heroku
+heroku container:push web --app <app-name>
+heroku container:release web --app <app-name>
+
+# Deploy on AWS
+AWSAccessKeyId=AKIAXQW67ZHWGE245EEG
+AWSSecretKey=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
+
+# Remove a profile
+ecs-cli compose --project-name tutorial  --file docker-compose.yml \
+--debug service down  \
+--region us-west-2 --ecs-profile tutorial --cluster-config tutorial
+
+# Always run your AWS config data output first
+export AWS_ACCESS_KEY_ID="AKIAXQW67ZHWGE245EEG"
+export AWS_SECRET_ACCESS_KEY="sVZFRgnHMRr67WpYbUwJcT5rmIFPShyKwASL8HMU"
+export AWS_DEFAULT_REGION=us-west-2
+
+# Create the profile configure system on aws
+#!/bin/bash
+set -e
+PROFILE_NAME=socialiga
+CLUSTER_NAME=socialiga-cluster
+REGION=us-west-2
+LAUNCH_TYPE=EC2
+ecs-cli configure profile --profile-name "$PROFILE_NAME" --access-key "$AWS_ACCESS_KEY_ID" --secret-key "$AWS_SECRET_ACCESS_KEY"
+ecs-cli configure --cluster "$CLUSTER_NAME" --default-launch-type "$LAUNCH_TYPE" --region "$REGION" --config-name "$PROFILE_NAME"
+
+
+# Create permission pair
+aws ec2 create-key-pair --key-name socialiga-cluster \
+ --query 'KeyMaterial' --output text > ~/.ssh/socialiga-cluster.pem
+
+
+# Create cluster shell
+#!/bin/bash
+KEY_PAIR=socialiga-cluster
+    ecs-cli up \
+      --keypair $KEY_PAIR  \
+      --capability-iam \
+      --size 2 \
+      --instance-type t3.medium \
+      --tags project=socialiga-cluster,owner=mathemartins \
+      --cluster-config socialiga \
+      --ecs-profile socialiga
+
+# Deploy stack to the instance
+ecs-cli compose --project-name socialiga  --file docker-compose.yml \
+ --debug service up  \
+--deployment-max-percent 100 --deployment-min-healthy-percent 0 \
+  --region us-west-2 --ecs-profile socialiga \
+--cluster-config socialiga --create-log-groups
+
+# Kubernetes k8s
+# Immediately after downloading the k8s-config file, run this command in your terminal
+export KUBECONFIG=~/desktop/k8s-syarpa-kubeconfig.yaml
+
+# k8s pods are the deployment container house that carries the containerized codebase
+# A pod can be deleted and automatically recreated at the instance of deletion
+
+kubectl get nodes - returns all nodes
+kubectl get pods - returns all pods
+
+kubectl apply -f k8s/nginx/deployment.yaml - creates a deployment instance
+kubectl get deployments - returns all deployment pods created
+kubectl get deployments <name of deployment> - returns for specific name
+kubectl delete pod <pod name>
+kubectl delete pod nginx-deployment-684c85b7f4-d5h5s - would delete and replace the pod with a new one
+
+# To enter the one of the pods in the kubernetes cluster
+kubectl exec -it <podname> -- /bin/bash
+kubectl exec -it nginx-deployment-684c85b7f4-d5h5s -- /bin/bash
+
+# To take down all deployments plus pods
+kubectl delete -f k8s/nginx/deployment.yaml
+
+# Review the yaml file if needed to
+kubectl get service nginx-service -o yaml
+
+# Use kubernetes secret key handler
+kubectl get secret
+kubectl create secret generic syarpa-k8s-web-prod-env --from-env-file=.env.prod
+
+
+# Build back the docker container
+docker build -t registry.digitalocean.com/syarpa/syarpa-slim-burster:v1.0.0 -f Dockerfile .
+docker push registry.digitalocean.com/syarpa/syarpa-slim-burster --all-tags

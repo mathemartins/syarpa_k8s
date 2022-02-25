@@ -1,0 +1,74 @@
+name: Build Docker Container & Push To DO Registry
+
+on:
+  workflow_call:
+  workflow_dispatch:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  syarpa_test:
+    uses: mathemartins/syarpa/.github/workflows/test-syarpa.yaml@master
+  build:
+    runs-on: ubuntu-latest
+    needs: [syarpa_test]
+    env:
+      CLUSTER_NAME: k8s-syarpa
+
+    steps:
+    - name: Checkout codebase
+      uses: actions/checkout@v2
+    - name: Install doctl
+      uses: digitalocean/action-doctl@v2
+      with:
+        token: ${{ secrets.DO_API_TOKEN }}
+    - name: Login to DO Container Registry with short-lived creds
+      run: doctl registry login --expiry-seconds 1200
+    - name: Build container image
+      working-directory: ./web
+      run: |
+        docker build -f Dockerfile \
+          -t registry.digitalocean.com/syarpa/syarpa-slim-burster:latest \
+          -t registry.digitalocean.com/syarpa/syarpa-slim-burster:${GITHUB_SHA::7} \
+          .
+    - name: Push Image
+      run: |
+        docker push registry.digitalocean.com/syarpa/syarpa-slim-burster --all-tags
+    - name: k8s cluster kubeconfig file with/ short-lived creds
+      run: |
+        doctl kubernetes cluster kubeconfig save --expiry-seconds 600 ${{ env.CLUSTER_NAME }}
+    - name: Update deployment secrets
+      run: |
+        cat << EOF >> web/.env.prod
+        AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY }}
+        AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        INFURA_ENDPOINT=${{ secrets.INFURA_ENDPOINT }}
+        INFURA_WS=${{ secrets.INFURA_WS }}
+        ENV_ALLOWED_HOST=137.184.247.163
+        DJANGO_SECRET_KEY=\m5tzqb-0(z^i0olhs(-b(@&=6p6s&ws6j&^wwsmvfc*h&83ny0
+        DJANGO_SUPERUSER_USERNAME=mathemartins
+        DJANGO_SUPERUSER_PASSWORD=_byf0OTbxfBZxZItReC-jwDEHbdzzAT1O59qYtY2EiI
+        DJANGO_SUPERUSER_EMAIL=mathegeniuse@gmail.com
+        POSTGRES_DB=defaultdb
+        POSTGRES_PASSWORD=GqeEqPfxQDfMBUtK
+        POSTGRES_USER=doadmin
+        POSTGRES_HOST=syarpa-db-postgresql-do-user-10904361-0.b.db.ondigitalocean.com
+        POSTGRES_PORT=25060
+        REDIS_HOST=redis_db
+        REDIS_PORT=6388
+        EOF
+        kubectl delete secret syarpa-k8s-web-prod-env
+        kubectl create secret generic syarpa-k8s-web-prod-env --from-env-file=web/.env.prod
+    - name: Update deployment Image
+      run: |
+        kubectl set image deployment/syarpa-slim-burster-deployment syarpa-slim-burster=registry.digitalocean.com/syarpa/syarpa-slim-burster:${GITHUB_SHA::7}
+    - name: Wait for rollout completion
+      run: |
+        kubectl rollout status deployment/syarpa-slim-burster-deployment
+    - name: Migrate Syarpa Slim Burster - Migrate && Collectstatic
+      run: |
+        export SINGLE_POD_NAME=$(kubectl get pod -l app=syarpa-slim-burster-deployment -o jsonpath="{.items[0].metadata.name}")
+        kubectl exec -it $SINGLE_POD_NAME -- bash /app/migrate.sh
+        kubectl exec -it $SINGLE_POD_NAME -- bash /app/collectstatic.sh

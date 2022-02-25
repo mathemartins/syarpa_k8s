@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./web
+        working-directory: .
     env:
       DJANGO_SECRET_KEY: test-key-maybe-not-good-make-one-better
       POSTGRES_DB: syarpa

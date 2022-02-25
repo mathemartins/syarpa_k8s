@@ -176,4 +176,4 @@ STATICFILES_DIRS = [
     BASE_DIR / "staticfiles"
 ]
 from syarpa_k8s.cdn.conf import *  # noqa
-from syarpa_k8s.restconf import *  # noqa
+# from syarpa_k8s.restconf import *  # noqa

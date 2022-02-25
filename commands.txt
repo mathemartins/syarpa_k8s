@@ -112,3 +112,5 @@ kubectl create secret generic syarpa-k8s-web-prod-env --from-env-file=.env.prod
 # Build back the docker container
 docker build -t registry.digitalocean.com/syarpa/syarpa-slim-burster:v1.0.0 -f Dockerfile .
 docker push registry.digitalocean.com/syarpa/syarpa-slim-burster --all-tags
+
+# Remod

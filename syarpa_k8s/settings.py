@@ -169,3 +169,11 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+STATIC_ROOT = BASE_DIR / "staticfiles-cdn"
+
+STATICFILES_DIRS = [
+    BASE_DIR / "staticfiles"
+]
+from syarpa_k8s.cdn.conf import *  # noqa
+from syarpa_k8s.restconf import *  # noqa

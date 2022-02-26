@@ -18,3 +18,4 @@ redis==4.1.0
 requests==2.26.0
 s3transfer==0.5.1
 psycopg2-binary==2.9.2
+web3==5.28.0

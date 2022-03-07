@@ -49,6 +49,7 @@ INSTALLED_APPS += [
 # Project required modules
 INSTALLED_APPS += [
     'wallet',
+    'transaction',
 ]
 
 MIDDLEWARE = [

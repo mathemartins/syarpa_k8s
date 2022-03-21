@@ -133,7 +133,7 @@ Tasks
 4. Connect to Bsc and integrate system
 5. Connect to Solana and integrate
 6. Connect to Tron and integrate
-7. Connect to Tatum and integrate Bitcoin
+7. Connect to Tatum and integrate Bitcoin - Task
 
 Less pressing
 8. Build the staking / saving system

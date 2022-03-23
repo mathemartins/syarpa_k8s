@@ -50,6 +50,7 @@ INSTALLED_APPS += [
 INSTALLED_APPS += [
     'wallet',
     'transaction',
+    'coins',
 ]
 
 MIDDLEWARE = [
@@ -81,7 +82,8 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'syarpa_k8s.wsgi.application'
+# WSGI_APPLICATION = 'syarpa_k8s.wsgi.application'
+ASGI_APPLICATION = 'syarpa_k8s.asgi.application'
 
 
 # Database
@@ -128,6 +130,26 @@ if DB_IS_AVAIL:
         }
 
 print(DATABASES)
+
+CELERY_BROKER_URL = "rediss://default:KCAnYINTOypslB2a@private-db-redis-redis-do-user-10904361-0.b.db.ondigitalocean" \
+                    ".com:25061 "
+BROKER_URL = "rediss://default:KCAnYINTOypslB2a@private-db-redis-redis-do-user-10904361-0.b.db.ondigitalocean.com:25061"
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_RESULT_PASSWORD = "KCAnYINTOypslB2a"
+
+CHANNEL_LAYERS = {
+    # queue of messages
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': ["rediss://default:KCAnYINTOypslB2a@private-db-redis-redis-do-user-10904361-0.b.db"
+                      ".ondigitalocean.com:25061"],
+            'symmetric_encryption_keys': [SECRET_KEY],
+        },
+    },
+}
 
 
 # Password validation

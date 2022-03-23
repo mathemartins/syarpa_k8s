@@ -78,3 +78,10 @@ class EtherChain:
                 status=status.HTTP_201_CREATED
             )
         return Response({"message": "You are connected to the blockchain"}, status=status.HTTP_400_BAD_REQUEST)
+
+    def send_usdt(self, uuid: str, recipient_address: str, amount):
+        web3 = Web3(Web3.HTTPProvider(self.infura_endpoint))
+        if web3.isConnected():
+            pass
+        return Response({"message": "You are connected to the blockchain"}, status=status.HTTP_400_BAD_REQUEST)
+

@@ -18,5 +18,6 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/ethereum/', include('wallet.api.urls'))
+    path('api/ethereum/', include('wallet.api.urls')),
+    path('api/coins/', include('coins.api.urls'))
 ]

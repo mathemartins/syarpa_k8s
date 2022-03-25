@@ -80,7 +80,7 @@ ecs-cli compose --project-name socialiga  --file docker-compose.yml \
 
 # Kubernetes k8s
 # Immediately after downloading the k8s-config file, run this command in your terminal
-export KUBECONFIG=~/desktop/k8s-syarpa-kubeconfig.yaml
+export KUBECONFIG=~/desktop/syarpa-kubeconfig.yaml
 
 # k8s pods are the deployment container house that carries the containerized codebase
 # A pod can be deleted and automatically recreated at the instance of deletion

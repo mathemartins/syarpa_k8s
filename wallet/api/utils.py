@@ -66,7 +66,7 @@ class EtherChain:
             )
             tx_hash = web3.eth.sendRawTransaction(signed_transaction.rawTransaction)
 
-            # waits for 5 seconds before updating balance
+            # waits for 10 seconds before updating balance
             sleep(10)
 
             return Response(
@@ -77,7 +77,7 @@ class EtherChain:
                 },
                 status=status.HTTP_201_CREATED
             )
-        return Response({"message": "You are connected to the blockchain"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"message": "You are not connected to the blockchain"}, status=status.HTTP_400_BAD_REQUEST)
 
     def send_usdt(self, uuid: str, recipient_address: str, amount):
         web3 = Web3(Web3.HTTPProvider(self.infura_endpoint))

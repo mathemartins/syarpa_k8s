@@ -17,6 +17,5 @@ app.autodiscover_tasks()
 
 # web: daphne syarpa_k8s.asgi:application --port $PORT --bind 0.0.0.0 -v2
 # worker: python manage.py runworker --settings=syarpa_k8s.settings -v2
-
 # celery -A syarpa_k8s worker -l INFO --concurrency 1 -P solo
 # celery -A syarpa_k8s beat -l INFO

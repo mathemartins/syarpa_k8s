@@ -127,16 +127,18 @@ host = private-db-redis-redis-do-user-10904361-0.b.db.ondigitalocean.com
 port = 25061
 
 Tasks
-1. Switch system config to ASGI and integrate system with coingecko for market prices as websocket
-2. Configure system with channels
+1. Switch system config to ASGI and integrate system with coingecko for market prices as websocket - Done
+2. Configure system with channels - Done
 3. Finish up transfer endpoint for off-chain and on-chain transaction - Done
 4. Connect to Bsc and integrate system
 5. Connect to Solana and integrate
 6. Connect to Tron and integrate
-7. Connect to Tatum and integrate Bitcoin - Task
+7. Connect to Tatum and integrate Bitcoin - Task Current
 
 Less pressing
 8. Build the staking / saving system
 9. Build the P2P system
 
+10. Connect to Polygon and integrate
+11. Connect to Avalanche and integrate
 

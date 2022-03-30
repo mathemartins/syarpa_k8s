@@ -7,7 +7,6 @@ from rest_framework.response import Response
 from time import sleep
 from web3 import Web3
 
-from syarpa_k8s.settings import BASE_DIR
 from wallet.models import Ethereum, TetherUSD, Bitcoin
 
 
@@ -391,3 +390,14 @@ class OminiChain:
             "private_key": pk_response_dict.get("key")
         }
         return Response(data=data, status=status.HTTP_200_OK)
+
+
+class BinanceSmartChain:
+    def __init__(self, bsc_endpoint=os.environ.get('BINANCE_SMARTCHAIN')):
+        self.bsc_endpoint = bsc_endpoint
+
+    def create_wallet(self):
+        web3 = Web3(Web3.HTTPProvider(self.bsc_endpoint))
+        if web3.isConnected():
+            return web3.eth.account.create()
+        return Response({"message": "You are connected to the blockchain"}, status=status.HTTP_400_BAD_REQUEST)

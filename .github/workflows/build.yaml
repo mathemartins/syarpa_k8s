@@ -30,12 +30,12 @@ jobs:
       working-directory: .
       run: |
         docker build -f Dockerfile \
-          -t registry.digitalocean.com/syarpa/syarpa-k8s-slim-burster:latest \
-          -t registry.digitalocean.com/syarpa/syarpa-k8s-slim-burster:${GITHUB_SHA::7} \
+          -t registry.digitalocean.com/syarpa/syarpa:latest \
+          -t registry.digitalocean.com/syarpa/syarpa:${GITHUB_SHA::7} \
           .
     - name: Push Image
       run: |
-        docker push registry.digitalocean.com/syarpa/syarpa-k8s-slim-burster --all-tags
+        docker push registry.digitalocean.com/syarpa/syarpa --all-tags
     - name: k8s cluster kubeconfig file with/ short-lived creds
       run: |
         doctl kubernetes cluster kubeconfig save --expiry-seconds 600 ${{ env.CLUSTER_NAME }}
@@ -46,30 +46,32 @@ jobs:
         AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
         INFURA_ENDPOINT=${{ secrets.INFURA_ENDPOINT }}
         INFURA_WS=${{ secrets.INFURA_WS }}
-        ENV_ALLOWED_HOST=159.89.249.10
+        ENV_ALLOWED_HOST=138.68.118.219
         DJANGO_SECRET_KEY=\m5tzqb-0(z^i0olhs(-b(@&=6p6s&ws6j&^wwsmvfc*h&83ny0
         DJANGO_SUPERUSER_USERNAME=mathemartins
         DJANGO_SUPERUSER_PASSWORD=_byf0OTbxfBZxZItReC-jwDEHbdzzAT1O59qYtY2EiI
         DJANGO_SUPERUSER_EMAIL=mathegeniuse@gmail.com
+        AWS_ACCESS_KEY_ID=CYVYY4OQS3OHKNE44GKT
+        AWS_SECRET_ACCESS_KEY=CdOqZDWtNYup8QU4I5LtBkD4eChQereUbqO3UoWkC/E
         POSTGRES_DB=defaultdb
-        POSTGRES_PASSWORD=YU7wWfFuAUrTEqPN
+        POSTGRES_PASSWORD=AVNS_w9rm-WG-X-SUKbV
         POSTGRES_USER=doadmin
-        POSTGRES_HOST=private-db-postgresql-syarpaa-do-user-10904361-0.b.db.ondigitalocean.com
+        POSTGRES_HOST=private-syarpa-do-user-10904361-0.b.db.ondigitalocean.com
         POSTGRES_PORT=25060
         REDIS_HOST=redis_db
         REDIS_PORT=6388
         EOF
-        kubectl delete secret syarpa-k8s-web-prod-env
-        kubectl create secret generic syarpa-k8s-web-prod-env --from-env-file=.env.prod
+        kubectl delete secret syarpa-web-prod-env
+        kubectl create secret generic syarpa-web-prod-env --from-env-file=.env.prod
     - name: Update deployment Image
       run: |
-        kubectl set image deployment/syarpa-k8s-slim-burster-deployment syarpa-k8s-slim-burster=registry.digitalocean.com/syarpa/syarpa-k8s-slim-burster:${GITHUB_SHA::7}
+        kubectl set image deployment/syarpa-deployment syarpa=registry.digitalocean.com/syarpa/syarpa-burster:${GITHUB_SHA::7}
     - name: Wait for rollout completion
       run: |
-        kubectl rollout status deployment/syarpa-k8s-slim-burster-deployment
+        kubectl rollout status deployment/syarpa-deployment
     - name: Migrate Syarpa Slim Burster - Migrate && Collectstatic
       run: |
-        export SINGLE_POD_NAME=$(kubectl get pod -l app=syarpa-k8s-slim-burster-deployment -o jsonpath="{.items[0].metadata.name}")
+        export SINGLE_POD_NAME=$(kubectl get pod -l app=syarpa-deployment -o jsonpath="{.items[0].metadata.name}")
         kubectl exec -it $SINGLE_POD_NAME -- bash /app/migrate.sh
         kubectl exec -it $SINGLE_POD_NAME -- bash /app/collectstatic.sh
 #        kubectl exec -it $SINGLE_POD_NAME -- bash /app/runworker.sh

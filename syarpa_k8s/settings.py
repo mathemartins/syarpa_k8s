@@ -132,21 +132,21 @@ if DB_IS_AVAIL:
 
 print(DATABASES)
 
-CELERY_BROKER_URL = "rediss://default:KCAnYINTOypslB2a@private-db-redis-redis-do-user-10904361-0.b.db.ondigitalocean" \
-                    ".com:25061 "
-BROKER_URL = "rediss://default:KCAnYINTOypslB2a@private-db-redis-redis-do-user-10904361-0.b.db.ondigitalocean.com:25061"
+CELERY_BROKER_URL = "rediss://default:AVNS_tSdOF4Fo9u1dqEm@private-syarpa-redis-do-user-10904361-0.b.db" \
+                    ".ondigitalocean.com "
+BROKER_URL = "rediss://default:AVNS_tSdOF4Fo9u1dqEm@private-syarpa-redis-do-user-10904361-0.b.db.ondigitalocean.com"
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
-CELERY_RESULT_PASSWORD = "KCAnYINTOypslB2a"
+CELERY_RESULT_PASSWORD = "AVNS_tSdOF4Fo9u1dqEm"
 
 CHANNEL_LAYERS = {
     # queue of messages
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            'hosts': ["rediss://default:KCAnYINTOypslB2a@private-db-redis-redis-do-user-10904361-0.b.db"
-                      ".ondigitalocean.com:25061"],
+            'hosts': ["rediss://default:AVNS_tSdOF4Fo9u1dqEm@private-syarpa-redis-do-user-10904361-0.b.db"
+                      ".ondigitalocean.com"],
             'symmetric_encryption_keys': [SECRET_KEY],
         },
     },

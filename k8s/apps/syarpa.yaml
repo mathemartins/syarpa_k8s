@@ -1,26 +1,26 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: syarpa-k8s-slim-burster-deployment
+  name: syarpa-deployment
   labels:
-    app: syarpa-k8s-slim-burster-deployment
+    app: syarpa-deployment
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: syarpa-k8s-slim-burster-deployment
+      app: syarpa-deployment
   template:
     metadata:
       labels:
-        app: syarpa-k8s-slim-burster-deployment
+        app: syarpa-deployment
     spec:
       containers:
-      - name: syarpa-k8s-slim-burster
-        image: registry.digitalocean.com/syarpa/syarpa-k8s-slim-burster:latest
+      - name: syarpa-burster
+        image: registry.digitalocean.com/syarpa/syarpa:latest
         imagePullPolicy: Always
         envFrom:
           - secretRef:
-              name: syarpa-k8s-web-prod-env
+              name: syarpa-web-prod-env
         env:
           - name: PORT
             value: "8002"
@@ -34,7 +34,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: syarpa-k8s-slim-burster-service
+  name: syarpa-service
 spec:
   type: LoadBalancer
   ports:
@@ -43,4 +43,4 @@ spec:
       port: 80
       targetPort: 8002
   selector:
-    app: syarpa-k8s-slim-burster-deployment
+    app: syarpa-deployment

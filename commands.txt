@@ -102,35 +102,40 @@ kubectl exec -it nginx-deployment-684c85b7f4-d5h5s -- /bin/bash
 kubectl delete -f k8s/nginx/deployment.yaml
 
 # Review the yaml file if needed to
+kubectl get service
 kubectl get service nginx-service -o yaml
 
 # Use kubernetes secret key handler
 kubectl get secret
-kubectl create secret generic syarpa-k8s-web-prod-env --from-env-file=.env.prod
+kubectl create secret generic syarpa-web-prod-env --from-env-file=.env.prod
 
 
 # Build back the docker container
-docker build -t registry.digitalocean.com/syarpa/syarpa-slim-burster:v1.0.0 -f Dockerfile .
-docker push registry.digitalocean.com/syarpa/syarpa-slim-burster --all-tags
+docker build -t registry.digitalocean.com/syarpa/syarpa:v1.0.0 -f Dockerfile .
+docker push registry.digitalocean.com/syarpa/syarpa --all-tags
+
+Spaces ACCESS_KEY=CYVYY4OQS3OHKNE44GKT
+SPaces SECRET_KEY=CdOqZDWtNYup8QU4I5LtBkD4eChQereUbqO3UoWkC/E
+
 
 # Remod
 # Redis Info - Public Network
 username = default
-password = KCAnYINTOypslB2a
-host = db-redis-redis-do-user-10904361-0.b.db.ondigitalocean.com
+password = AVNS_tSdOF4Fo9u1dqEm
+host = syarpa-redis-do-user-10904361-0.b.db.ondigitalocean.com
 port = 25061
 
 # Redis Info - Private VPC Network
 username = default
-password = KCAnYINTOypslB2a
-host = private-db-redis-redis-do-user-10904361-0.b.db.ondigitalocean.com
+password = AVNS_tSdOF4Fo9u1dqEm
+host = private-syarpa-redis-do-user-10904361-0.b.db.ondigitalocean.com
 port = 25061
 
 Tasks
 1. Switch system config to ASGI and integrate system with coingecko for market prices as websocket - Done
 2. Configure system with channels - Done
 3. Finish up transfer endpoint for off-chain and on-chain transaction - Done
-4. Connect to Bsc and integrate system
+4. Connect to Bsc and integrate system - Done
 5. Connect to Solana and integrate
 6. Connect to Tron and integrate
 7. Connect to Tatum and integrate Bitcoin - Task Current
@@ -141,4 +146,22 @@ Less pressing
 
 10. Connect to Polygon and integrate
 11. Connect to Avalanche and integrate
+
+Avalanche Network Details
+
+Network Name - Avalanche Network
+New RPC URL - https://api.avax.network/ext/bc/C/rpc
+Chain ID - 43114 or 0xa86a
+Currency Symbol - AVAX
+Block Explorer URL - https://snowtrace.io/
+
+Network Name - Polygon
+New RPC URL - Choose any of the following:
+https://polygon-rpc.com
+https://rpc-mainnet.maticvigil.com
+https://rpc-mainnet.matic.network
+https://rpc-mainnet.matic.quiknode.pro
+Chain ID - 137
+Currency Symbol - MATIC
+Block Explorer URL - https://polygonscan.com/
 

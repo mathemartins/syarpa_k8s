@@ -15,12 +15,12 @@ spec:
         app: syarpa-deployment
     spec:
       containers:
-      - name: syarpa-burster
+      - name: syarpa
         image: registry.digitalocean.com/syarpa/syarpa:latest
         imagePullPolicy: Always
         envFrom:
           - secretRef:
-              name: syarpa-web-prod-env
+              name: syarpa
         env:
           - name: PORT
             value: "8002"

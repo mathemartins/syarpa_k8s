@@ -59,8 +59,8 @@ jobs:
         REDIS_HOST=redis_db
         REDIS_PORT=6388
         EOF
-        kubectl delete secret syarpa-web-prod-env
-        kubectl create secret generic syarpa-web-prod-env --from-env-file=.env.prod
+        kubectl delete secret syarpa
+        kubectl create secret generic syarpa --from-env-file=.env.prod
     - name: Update deployment Image
       run: |
         kubectl set image deployment/syarpa-deployment syarpa=registry.digitalocean.com/syarpa/syarpa-burster:${GITHUB_SHA::7}

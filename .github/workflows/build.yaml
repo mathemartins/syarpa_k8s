@@ -63,7 +63,7 @@ jobs:
         kubectl create secret generic syarpa --from-env-file=.env.prod
     - name: Update deployment Image
       run: |
-        kubectl set image deployment/syarpa-deployment syarpa=registry.digitalocean.com/syarpa/syarpa-burster:${GITHUB_SHA::7}
+        kubectl set image deployment/syarpa-deployment syarpa=registry.digitalocean.com/syarpa/syarpa:${GITHUB_SHA::7}
     - name: Wait for rollout completion
       run: |
         kubectl rollout status deployment/syarpa-deployment

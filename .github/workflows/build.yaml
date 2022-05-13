@@ -46,7 +46,7 @@ jobs:
         AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
         INFURA_ENDPOINT=${{ secrets.INFURA_ENDPOINT }}
         INFURA_WS=${{ secrets.INFURA_WS }}
-        ENV_ALLOWED_HOST=206.189.247.192
+        ENV_ALLOWED_HOST=159.65.209.237
         DJANGO_SECRET_KEY=\m5tzqb-0(z^i0olhs(-b(@&=6p6s&ws6j&^wwsmvfc*h&83ny0
         DJANGO_SUPERUSER_USERNAME=mathemartins
         DJANGO_SUPERUSER_PASSWORD=_byf0OTbxfBZxZItReC-jwDEHbdzzAT1O59qYtY2EiI

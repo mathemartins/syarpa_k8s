@@ -1,21 +1,21 @@
 version: "3.9"
 services:
-#  web:
-#   depends_on:
-#     - postgres_db
-#   build:
-#     context: .
-#     dockerfile: Dockerfile
-#   image: syarpa-slim-burster:v1.0.0
-#   environment:
-#     - PORT=8020
-#   env_file:
-#     - .env
-#   ports:
-#     - "8001:8020"
-#   command: sh -c "chmod +x /app/migrate.sh && sh /app/migrate.sh && /app/entrypoint.sh"
-#   volumes:
-#      - staticfiles:/app/staticfiles/
+  web:
+   depends_on:
+     - postgres_db
+   build:
+     context: .
+     dockerfile: Dockerfile
+   image: syarpa-slim-burster:v1.0.0
+   environment:
+     - PORT=8020
+   env_file:
+     - .env
+   ports:
+     - "8001:8020"
+   command: sh -c "chmod +x /app/migrate.sh && sh /app/migrate.sh && /app/entrypoint.sh"
+   volumes:
+      - staticfiles:/app/staticfiles/
 
   postgres_db:
     image: postgres

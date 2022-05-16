@@ -199,5 +199,5 @@ STATIC_ROOT = BASE_DIR / "staticfiles-cdn"
 STATICFILES_DIRS = [
     BASE_DIR / "staticfiles"
 ]
-from syarpa_k8s.cdn.conf import *  # noqa
+# from syarpa_k8s.cdn.conf import *  # noqa # @TODO: to be release for digital ocean
 from syarpa_k8s.restconf import *  # noqa

@@ -52,6 +52,7 @@ INSTALLED_APPS += [
     'wallet',
     'transaction',
     'coins',
+    'p2p',
 ]
 
 MIDDLEWARE = [

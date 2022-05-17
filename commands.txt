@@ -136,16 +136,16 @@ Tasks
 2. Configure system with channels - Done
 3. Finish up transfer endpoint for off-chain and on-chain transaction - Done
 4. Connect to Bsc and integrate system - Done
-5. Connect to Solana and integrate
-6. Connect to Tron and integrate
-7. Connect to Tatum and integrate Bitcoin - Task Current
+5. Connect to Solana and integrate - Not now
+6. Connect to Tron and integrate - Done
+7. Connect to Tatum and integrate Bitcoin - Done
 
 Less pressing
 8. Build the staking / saving system
 9. Build the P2P system
 
-10. Connect to Polygon and integrate
-11. Connect to Avalanche and integrate
+10. Connect to Polygon and integrate - Not Done
+11. Connect to Avalanche and integrate - Not Done
 
 Avalanche Network Details
 

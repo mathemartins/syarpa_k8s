@@ -5,6 +5,8 @@ import requests
 from rest_framework import status
 from rest_framework.response import Response
 from time import sleep
+
+from tronapi import Tron
 from web3 import Web3
 
 from wallet.abis.usdt import erc20_usdt_abi, bep20_usdt_abi
@@ -247,6 +249,153 @@ class BinanceSmartChain:
             usdt_address = Web3.toChecksumAddress(address)
             usdt_balance = usdt_contract.functions.balanceOf(usdt_address).call()
             return web3.fromWei(usdt_balance, 'ether')
+
+
+class TronChain:
+    def __init__(self, tron_api_key: str, tron_base_url: str):
+        self.tron_api_key = tron_api_key
+        self.tron_base_url = tron_base_url
+        self.tron = Tron(full_node=tron_base_url,
+                         solidity_node=tron_base_url,
+                         event_server=tron_base_url)
+
+    def trx_to_sun(self, trx: str):
+        """1 TRX = 1,000,000 SUN."""
+        return float(trx) * 1000000
+
+    def sun_to_trx(self, sun: str):
+        """1 TRX = 1,000,000 SUN."""
+        return float(sun) / 1000000
+
+    def create(self):
+        """
+        {
+          "privateKey": "66fd0679ace96acf6507aa7de9d7ac4099530624f64ad409a24d0d43d416d689",
+          "address": "TC78sj8eeEfXqvyw9roH2hbgvKZPPuLz4h",
+          "hexAddress": "411770227c3fdfd2d46e8e05aca8c7546cb99ba5a1"
+        }
+        """
+        url = f"{self.tron_base_url}wallet/generateaddress"
+        headers = {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "TRON-PRO-API-KEY": f"{self.tron_api_key}"
+        }
+        response = requests.get(url, headers=headers)
+        return json.loads(response.content.decode("utf-8"))
+
+    def create_tron_account(self, private_key: str):
+        private_key = private_key
+        account = self.tron.create_account
+        is_valid = bool(self.tron.isAddress(account.address.hex))
+        if is_valid:
+            data = {
+                "public_key": account.public_key,
+                "address": {
+                    "base58": account.address.base58,
+                    "hex": account.address.hex,
+                    "isValid": str(is_valid)
+                }
+            }
+            return json.dumps(data)
+        return False
+
+    def transfer(self, private_key: str, recipient_address: str, amount: str):
+        url = f"{self.tron_base_url}wallet/easytransferbyprivate"
+        amount_in_trx = self.sun_to_trx(sun=amount)
+        payload = {
+            "privateKey": private_key,
+            "toAddress": recipient_address,
+            "amount": amount_in_trx
+        }
+        headers = {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "TRON-PRO-API-KEY": f"{self.tron_api_key}"
+        }
+        response = requests.post(url, json=payload, headers=headers)
+        return json.loads(response.content.decode("utf-8"))
+
+    def transfer_proto_comp(self, private_key: str, sender_address: str, recipient_address, amount):
+        self.tron.private_key = private_key
+        self.tron.default_address = sender_address
+        return self.tron.trx.send_transaction(recipient_address, amount)
+
+    def create_transaction(self, sender_address: str, recipient_address: str):
+        url = f"{self.tron_base_url}wallet/createtransaction"
+        payload = {
+            "to_address": recipient_address,
+            "owner_address": sender_address
+        }
+        headers = {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "TRON-PRO-API-KEY": f"{self.tron_api_key}"
+        }
+        response = requests.post(url, json=payload, headers=headers)
+        return json.loads(response.content.decode("utf-8"))
+
+    def get_transaction_sign(self, private_key: str, raw_data: dict):
+        url = f"{self.tron_base_url}wallet/gettransactionsign"
+        payload = {
+            "transaction": {
+                "raw_data": str(raw_data),
+                "raw_data_hex": self.tron.toHex(raw_data)
+            },
+            "privateKey": private_key
+        }
+        headers = {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "TRON-PRO-API-KEY": f"{self.tron_api_key}"
+        }
+        response = requests.post(url, json=payload, headers=headers)
+        return json.loads(response.content.decode("utf-8"))
+
+    def sign_transaction(self, private_key: str, sender_address: str, recipient_address, amount):
+        self.tron.private_key = private_key
+        self.tron.default_address = sender_address
+        create_tx = self.tron.transaction_builder.send_transaction(recipient_address, amount, sender_address)
+        # offline sign
+        offline_sign = self.tron.trx.sign(create_tx)
+        # online sign (Not recommended)
+        online_sign = self.tron.trx.online_sign(create_tx)
+        return json.dumps({"offline_sign": offline_sign, "online_sign": online_sign})
+
+    def broadcast_transaction(self, raw_data: dict):
+        """
+        {
+          "code": "SIGERROR",
+          "txid": "77ddfa7093cc5f745c0d3a54abb89ef070f983343c05e0f89e5a52f3e5401299",
+          "message": "56616c6964617465207369676e6174757265206572726f723a206d69737320736967206f7220636f6e7472616374"
+        }
+        :param raw_data:
+        :return:
+        """
+        url = f"{self.tron_base_url}wallet/broadcasttransaction"
+        payload = {
+            "raw_data": str(raw_data),
+            "raw_data_hex": self.tron.toHex(raw_data)
+        }
+        headers = {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "TRON-PRO-API-KEY": f"{self.tron_api_key}"
+        }
+        response = requests.post(url, json=payload, headers=headers)
+        return json.loads(response.content.decode("utf-8"))
+
+    def broadcast_hex(self, tx_hex: str):
+        url = f"{self.tron_base_url}wallet/broadcasthex"
+        payload = {
+            "transaction": tx_hex}
+        headers = {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "TRON-PRO-API-KEY": f"{self.tron_api_key}"
+        }
+        response = requests.post(url, json=payload, headers=headers)
+        return json.loads(response.content.decode("utf-8"))
 
 
 class OminiChain:

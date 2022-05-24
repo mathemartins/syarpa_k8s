@@ -2,6 +2,7 @@ import hashlib
 import os
 import time
 
+from django.db.models import QuerySet
 from rest_framework import status
 from rest_framework.generics import CreateAPIView, RetrieveAPIView
 from rest_framework.response import Response
@@ -128,12 +129,35 @@ class EthereumWalletDetails(RetrieveAPIView):
         :return:
         """
         owner: Ethereum = Ethereum.objects.get(uuid=kwargs.get('uuid'))
-        try:
-            trx_qs = Transaction.objects.filter(sender=owner.public_key).order_by("-timestamp")
+        trx_qs: QuerySet = Transaction.objects.filter(sender=owner.public_key).order_by("-timestamp")
+        print(trx_qs)
+        if trx_qs.exists():
             recent_trx = trx_qs.first()
             last_bal = recent_trx.balance_after_transaction
-        except Transaction.DoesNotExist:
-            last_bal = 0
+            recent_bal = chain_connection.get_wallet_balance(owner.public_key)
+            exact_amount_increase = recent_bal - last_bal
+            print(exact_amount_increase)
+
+            owner.previous_bal = owner.previous_bal + exact_amount_increase
+            owner.available_bal = owner.available_bal + exact_amount_increase
+            owner.save()
+
+            details = {
+                "address": owner.public_key,
+                "available_balance": owner.available_bal,
+                "frozen": owner.frozen,
+                "frozen_bal": owner.frozen_bal,
+                "uuid": owner.uuid,
+                "name": owner.name,
+                "short_name": owner.short_name,
+                "icon": owner.icon
+            }
+
+            return Response(
+                {"message": "retrieved", "data": details},
+                status=status.HTTP_200_OK
+            )
+        last_bal = 0
         recent_bal = chain_connection.get_wallet_balance(owner.public_key)
         exact_amount_increase = recent_bal - last_bal
         print(exact_amount_increase)
@@ -270,13 +294,36 @@ class USDTWalletDetails(RetrieveAPIView):
         :return:
         """
         owner: TetherUSD = TetherUSD.objects.get(uuid=kwargs.get('uuid'))
-        try:
-            trx_qs = Transaction.objects.filter(sender=owner.public_key).order_by("-timestamp")
+        trx_qs: QuerySet = Transaction.objects.filter(sender=owner.public_key).order_by("-timestamp")
+        print(trx_qs)
+        if trx_qs.exists():
             recent_trx = trx_qs.first()
             last_bal = recent_trx.balance_after_transaction
-        except Transaction.DoesNotExist:
-            last_bal = 0
-        recent_bal = chain_connection.get_usdt_balance(owner.public_key)
+            recent_bal = chain_connection.get_wallet_balance(owner.public_key)
+            exact_amount_increase = recent_bal - last_bal
+            print(exact_amount_increase)
+
+            owner.previous_bal = owner.previous_bal + exact_amount_increase
+            owner.available_bal = owner.available_bal + exact_amount_increase
+            owner.save()
+
+            details = {
+                "address": owner.public_key,
+                "available_balance": owner.available_bal,
+                "frozen": owner.frozen,
+                "frozen_bal": owner.frozen_bal,
+                "uuid": owner.uuid,
+                "name": owner.name,
+                "short_name": owner.short_name,
+                "icon": owner.icon
+            }
+
+            return Response(
+                {"message": "retrieved", "data": details},
+                status=status.HTTP_200_OK
+            )
+        last_bal = 0
+        recent_bal = chain_connection.get_wallet_balance(owner.public_key)
         exact_amount_increase = recent_bal - last_bal
         print(exact_amount_increase)
 
@@ -412,13 +459,36 @@ class BinanceWalletDetails(RetrieveAPIView):
         :return:
         """
         owner: BinanceCoin = BinanceCoin.objects.get(uuid=kwargs.get('uuid'))
-        try:
-            trx_qs = Transaction.objects.filter(sender=owner.public_key).order_by("-timestamp")
+        trx_qs: QuerySet = Transaction.objects.filter(sender=owner.public_key).order_by("-timestamp")
+        print(trx_qs)
+        if trx_qs.exists():
             recent_trx = trx_qs.first()
             last_bal = recent_trx.balance_after_transaction
-        except Transaction.DoesNotExist:
-            last_bal = 0
-        recent_bal = bsc_chain_connection.get_wallet_balance(owner.public_key)
+            recent_bal = chain_connection.get_wallet_balance(owner.public_key)
+            exact_amount_increase = recent_bal - last_bal
+            print(exact_amount_increase)
+
+            owner.previous_bal = owner.previous_bal + exact_amount_increase
+            owner.available_bal = owner.available_bal + exact_amount_increase
+            owner.save()
+
+            details = {
+                "address": owner.public_key,
+                "available_balance": owner.available_bal,
+                "frozen": owner.frozen,
+                "frozen_bal": owner.frozen_bal,
+                "uuid": owner.uuid,
+                "name": owner.name,
+                "short_name": owner.short_name,
+                "icon": owner.icon
+            }
+
+            return Response(
+                {"message": "retrieved", "data": details},
+                status=status.HTTP_200_OK
+            )
+        last_bal = 0
+        recent_bal = chain_connection.get_wallet_balance(owner.public_key)
         exact_amount_increase = recent_bal - last_bal
         print(exact_amount_increase)
 

@@ -53,6 +53,7 @@ INSTALLED_APPS += [
     'transaction',
     'coins',
     'p2p',
+    'rates',
 ]
 
 MIDDLEWARE = [

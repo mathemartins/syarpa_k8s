@@ -128,9 +128,12 @@ class EthereumWalletDetails(RetrieveAPIView):
         :return:
         """
         owner: Ethereum = Ethereum.objects.get(uuid=kwargs.get('uuid'))
-        trx_qs = Transaction.objects.filter(sender=owner.public_key).order_by("-timestamp")
-        recent_trx = trx_qs.first()
-        last_bal = recent_trx.balance_after_transaction
+        try:
+            trx_qs = Transaction.objects.filter(sender=owner.public_key).order_by("-timestamp")
+            recent_trx = trx_qs.first()
+            last_bal = recent_trx.balance_after_transaction
+        except Transaction.DoesNotExist:
+            last_bal = 0
         recent_bal = chain_connection.get_wallet_balance(owner.public_key)
         exact_amount_increase = recent_bal - last_bal
         print(exact_amount_increase)
@@ -267,9 +270,12 @@ class USDTWalletDetails(RetrieveAPIView):
         :return:
         """
         owner: TetherUSD = TetherUSD.objects.get(uuid=kwargs.get('uuid'))
-        trx_qs = Transaction.objects.filter(sender=owner.public_key).order_by("-timestamp")
-        recent_trx = trx_qs.first()
-        last_bal = recent_trx.balance_after_transaction
+        try:
+            trx_qs = Transaction.objects.filter(sender=owner.public_key).order_by("-timestamp")
+            recent_trx = trx_qs.first()
+            last_bal = recent_trx.balance_after_transaction
+        except Transaction.DoesNotExist:
+            last_bal = 0
         recent_bal = chain_connection.get_usdt_balance(owner.public_key)
         exact_amount_increase = recent_bal - last_bal
         print(exact_amount_increase)
@@ -406,9 +412,12 @@ class BinanceWalletDetails(RetrieveAPIView):
         :return:
         """
         owner: BinanceCoin = BinanceCoin.objects.get(uuid=kwargs.get('uuid'))
-        trx_qs = Transaction.objects.filter(sender=owner.public_key).order_by("-timestamp")
-        recent_trx = trx_qs.first()
-        last_bal = recent_trx.balance_after_transaction
+        try:
+            trx_qs = Transaction.objects.filter(sender=owner.public_key).order_by("-timestamp")
+            recent_trx = trx_qs.first()
+            last_bal = recent_trx.balance_after_transaction
+        except Transaction.DoesNotExist:
+            last_bal = 0
         recent_bal = bsc_chain_connection.get_wallet_balance(owner.public_key)
         exact_amount_increase = recent_bal - last_bal
         print(exact_amount_increase)

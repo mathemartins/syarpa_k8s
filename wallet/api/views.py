@@ -570,14 +570,15 @@ class BitcoinCreate(APIView):
 class BitcoinWalletDetail(APIView):
     permission_classes = [AnonPermissionOnly]
 
-    def get(self, args, kwargs):
+    def get(self, *args, **kwargs):
+        print(kwargs)
         owner = BitcoinMnemonics.objects.get(uuid=kwargs.get('uuid'))
         owner_ledger = LedgerAccount.objects.get(xpub=owner)
         owner_address = Address.objects.get(xpub=owner)
 
         details = {
             "address": owner_address.address_key,
-            "available_balance": owner_ledger.available_bal,
+            "available_balance": owner_ledger.available_balance,
             "frozen": owner_ledger.frozen,
             "uuid": owner.uuid,
             "name": "Bitcoin",

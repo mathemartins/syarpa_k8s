@@ -20,6 +20,7 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/chain-net/', include('wallet.api.urls')),
+    path('api/trx/', include('transaction.api.urls')),
     path('api/coins/', include('coins.api.urls'))
 ]
 

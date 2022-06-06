@@ -2,6 +2,7 @@ import hashlib
 import os
 import time
 
+import cryptocompare
 from django.db.models import QuerySet
 from rest_framework import status
 from rest_framework.generics import CreateAPIView, RetrieveAPIView
@@ -142,9 +143,14 @@ class EthereumWalletDetails(RetrieveAPIView):
             owner.available_bal = owner.available_bal + exact_amount_increase
             owner.save()
 
+            price = cryptocompare.get_price('ETH', 'USD')
+            current_price_in_usd = price.get('ETH')['USD']
+            usd_price = current_price_in_usd * owner.available_bal
+
             details = {
                 "address": owner.public_key,
                 "available_balance": owner.available_bal,
+                "balance_in_usd": usd_price,
                 "frozen": owner.frozen,
                 "frozen_bal": owner.frozen_bal,
                 "uuid": owner.uuid,
@@ -166,9 +172,14 @@ class EthereumWalletDetails(RetrieveAPIView):
         owner.available_bal = owner.available_bal + exact_amount_increase
         owner.save()
 
+        price = cryptocompare.get_price('ETH', 'USD')
+        current_price_in_usd = price.get('ETH')['USD']
+        usd_price = current_price_in_usd * owner.available_bal
+
         details = {
             "address": owner.public_key,
             "available_balance": owner.available_bal,
+            "balance_in_usd": usd_price,
             "frozen": owner.frozen,
             "frozen_bal": owner.frozen_bal,
             "uuid": owner.uuid,
@@ -472,9 +483,14 @@ class BinanceWalletDetails(RetrieveAPIView):
             owner.available_bal = owner.available_bal + exact_amount_increase
             owner.save()
 
+            price = cryptocompare.get_price('BNB', 'USD')
+            current_price_in_usd = price.get('BNB')['USD']
+            usd_price = current_price_in_usd * owner.available_bal
+
             details = {
                 "address": owner.public_key,
                 "available_balance": owner.available_bal,
+                "balance_in_usd": usd_price,
                 "frozen": owner.frozen,
                 "frozen_bal": owner.frozen_bal,
                 "uuid": owner.uuid,
@@ -496,9 +512,14 @@ class BinanceWalletDetails(RetrieveAPIView):
         owner.available_bal = owner.available_bal + exact_amount_increase
         owner.save()
 
+        price = cryptocompare.get_price('BNB', 'USD')
+        current_price_in_usd = price.get('BNB')['USD']
+        usd_price = current_price_in_usd * owner.available_bal
+
         details = {
             "address": owner.public_key,
             "available_balance": owner.available_bal,
+            "balance_in_usd": usd_price,
             "frozen": owner.frozen,
             "frozen_bal": owner.frozen_bal,
             "uuid": owner.uuid,
@@ -576,9 +597,14 @@ class BitcoinWalletDetail(APIView):
         owner_ledger = LedgerAccount.objects.get(xpub=owner)
         owner_address = Address.objects.get(xpub=owner)
 
+        price = cryptocompare.get_price('BTC', 'USD')
+        current_price_in_usd = price.get('BTC')['USD']
+        usd_price = current_price_in_usd * owner_ledger.available_balance
+
         details = {
             "address": owner_address.address_key,
             "available_balance": owner_ledger.available_balance,
+            "balance_in_usd": usd_price,
             "frozen": owner_ledger.frozen,
             "uuid": owner.uuid,
             "name": "Bitcoin",

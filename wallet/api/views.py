@@ -599,7 +599,8 @@ class BitcoinWalletDetail(APIView):
 
         price = cryptocompare.get_price('BTC', 'USD')
         current_price_in_usd = price.get('BTC')['USD']
-        usd_price = current_price_in_usd * owner_ledger.available_balance
+        print(owner_ledger.available_balance)
+        usd_price = current_price_in_usd * int(owner_ledger.available_balance)
 
         details = {
             "address": owner_address.address_key,

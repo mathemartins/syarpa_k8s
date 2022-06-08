@@ -145,7 +145,7 @@ class EthereumWalletDetails(RetrieveAPIView):
 
             price = cryptocompare.get_price('ETH', 'USD')
             current_price_in_usd = price.get('ETH')['USD']
-            usd_price = current_price_in_usd * owner.available_bal
+            usd_price = current_price_in_usd * float(owner.available_bal)
 
             details = {
                 "address": owner.public_key,
@@ -174,7 +174,7 @@ class EthereumWalletDetails(RetrieveAPIView):
 
         price = cryptocompare.get_price('ETH', 'USD')
         current_price_in_usd = price.get('ETH')['USD']
-        usd_price = current_price_in_usd * owner.available_bal
+        usd_price = current_price_in_usd * float(owner.available_bal)
 
         details = {
             "address": owner.public_key,
@@ -321,6 +321,7 @@ class USDTWalletDetails(RetrieveAPIView):
             details = {
                 "address": owner.public_key,
                 "available_balance": owner.available_bal,
+                "balance_in_usd": owner.available_bal,
                 "frozen": owner.frozen,
                 "frozen_bal": owner.frozen_bal,
                 "uuid": owner.uuid,
@@ -485,7 +486,7 @@ class BinanceWalletDetails(RetrieveAPIView):
 
             price = cryptocompare.get_price('BNB', 'USD')
             current_price_in_usd = price.get('BNB')['USD']
-            usd_price = current_price_in_usd * owner.available_bal
+            usd_price = current_price_in_usd * float(owner.available_bal)
 
             details = {
                 "address": owner.public_key,
@@ -514,7 +515,7 @@ class BinanceWalletDetails(RetrieveAPIView):
 
         price = cryptocompare.get_price('BNB', 'USD')
         current_price_in_usd = price.get('BNB')['USD']
-        usd_price = current_price_in_usd * owner.available_bal
+        usd_price = current_price_in_usd * float(owner.available_bal)
 
         details = {
             "address": owner.public_key,
@@ -600,7 +601,7 @@ class BitcoinWalletDetail(APIView):
         price = cryptocompare.get_price('BTC', 'USD')
         current_price_in_usd = price.get('BTC')['USD']
         print(owner_ledger.available_balance)
-        usd_price = current_price_in_usd * int(owner_ledger.available_balance)
+        usd_price = current_price_in_usd * float(owner_ledger.available_balance)
 
         details = {
             "address": owner_address.address_key,
